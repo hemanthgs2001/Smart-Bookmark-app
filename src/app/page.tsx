@@ -22,9 +22,12 @@ const handleGoogleLogin = async () => {
   try {
     setLoading(true)
     
-    // Hardcode the EXACT redirect URL for production
-    const redirectTo = 'https://smart-bookmark-app-inky-nu.vercel.app/auth/callback';
+    // Log the environment variables
+    console.log('🔍 Supabase URL:', process.env.NEXT_PUBLIC_SUPABASE_URL);
+    console.log('🔍 NODE_ENV:', process.env.NODE_ENV);
     
+    // Hardcode the EXACT redirect URL
+    const redirectTo = 'https://smart-bookmark-app-inky-nu.vercel.app/auth/callback';
     console.log('🔍 Using redirect URL:', redirectTo);
     
     const { data, error } = await supabase.auth.signInWithOAuth({
@@ -34,9 +37,17 @@ const handleGoogleLogin = async () => {
       },
     })
     
-    console.log('🔍 OAuth response:', data);
+    console.log('🔍 OAuth data:', data);
+    console.log('🔍 Full OAuth URL:', data?.url);
     
     if (error) throw error
+    
+    // If we have a URL, log its components
+    if (data?.url) {
+      const urlObj = new URL(data.url);
+      console.log('🔍 redirect_uri parameter:', urlObj.searchParams.get('redirect_uri'));
+    }
+    
   } catch (error) {
     console.error('Error logging in:', error)
     setLoading(false)
