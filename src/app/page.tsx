@@ -18,41 +18,73 @@ export default function Home() {
     }
     checkUser()
   }, [router, supabase])
+// const handleGoogleLogin = async () => {
+//   try {
+//     setLoading(true)
+    
+//     // Log the environment variables
+//     console.log('🔍 Supabase URL:', process.env.NEXT_PUBLIC_SUPABASE_URL);
+//     console.log('🔍 NODE_ENV:', process.env.NODE_ENV);
+    
+//     // Hardcode the EXACT redirect URL
+//     const redirectTo = 'https://smart-bookmark-app-inky-nu.vercel.app/auth/callback';
+//     console.log('🔍 Using redirect URL:', redirectTo);
+    
+//     const { data, error } = await supabase.auth.signInWithOAuth({
+//       provider: 'google',
+//       options: {
+//         redirectTo: redirectTo,
+//       },
+//     })
+    
+//     console.log('🔍 OAuth data:', data);
+//     console.log('🔍 Full OAuth URL:', data?.url);
+    
+//     if (error) throw error
+    
+//     // If we have a URL, log its components
+//     if (data?.url) {
+//       const urlObj = new URL(data.url);
+//       console.log('🔍 redirect_uri parameter:', urlObj.searchParams.get('redirect_uri'));
+//     }
+    
+//   } catch (error) {
+//     console.error('Error logging in:', error)
+//     setLoading(false)
+//   }
+// }
+
+
 const handleGoogleLogin = async () => {
   try {
     setLoading(true)
     
-    // Log the environment variables
-    console.log('🔍 Supabase URL:', process.env.NEXT_PUBLIC_SUPABASE_URL);
-    console.log('🔍 NODE_ENV:', process.env.NODE_ENV);
+    // Your Supabase project ID from the URL
+    const supabaseUrl = 'https://alggymnjzqbajwdidkyw.supabase.co';
     
     // Hardcode the EXACT redirect URL
     const redirectTo = 'https://smart-bookmark-app-inky-nu.vercel.app/auth/callback';
-    console.log('🔍 Using redirect URL:', redirectTo);
     
-    const { data, error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: redirectTo,
-      },
-    })
+    console.log('🔍 Supabase URL:', supabaseUrl);
+    console.log('🔍 Redirect to:', redirectTo);
     
-    console.log('🔍 OAuth data:', data);
-    console.log('🔍 Full OAuth URL:', data?.url);
+    // Construct the OAuth URL manually
+    const oauthUrl = `${supabaseUrl}/auth/v1/authorize?provider=google&redirect_to=${encodeURIComponent(redirectTo)}`;
     
-    if (error) throw error
+    console.log('🔍 Full OAuth URL:', oauthUrl);
     
-    // If we have a URL, log its components
-    if (data?.url) {
-      const urlObj = new URL(data.url);
-      console.log('🔍 redirect_uri parameter:', urlObj.searchParams.get('redirect_uri'));
-    }
+    // Redirect manually
+    window.location.href = oauthUrl;
     
   } catch (error) {
     console.error('Error logging in:', error)
     setLoading(false)
   }
 }
+
+
+
+
   return (
     <main className="flex min-h-screen flex-col items-center justify-center p-24">
       <div className="z-10 max-w-5xl w-full items-center justify-center font-mono text-sm flex flex-col">
