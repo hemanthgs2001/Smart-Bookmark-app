@@ -59,13 +59,12 @@ const handleGoogleLogin = async () => {
   try {
     setLoading(true)
     
-    // Your Supabase project ID from the URL
-    const supabaseUrl = 'https://alggymnjzqbajwdidkyw.supabase.co';
+    // Use environment variable instead of hardcoding
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    console.log('🔍 Supabase URL from env:', supabaseUrl);
     
     // Hardcode the EXACT redirect URL
     const redirectTo = 'https://smart-bookmark-app-inky-nu.vercel.app/auth/callback';
-    
-    console.log('🔍 Supabase URL:', supabaseUrl);
     console.log('🔍 Redirect to:', redirectTo);
     
     // Construct the OAuth URL manually
@@ -73,18 +72,8 @@ const handleGoogleLogin = async () => {
     
     console.log('🔍 Full OAuth URL:', oauthUrl);
     
-    // Log the encoded redirect_to parameter separately
-    const encodedRedirect = encodeURIComponent(redirectTo);
-    console.log('🔍 Encoded redirect_to:', encodedRedirect);
-    
-    // Also log what we're about to redirect to
-    console.log('🔍 Final redirect URL:', oauthUrl);
-    
-    // Open in new window to see the exact URL (optional)
-    window.open(oauthUrl, '_blank');
-    
-    // Or redirect manually
-    // window.location.href = oauthUrl;
+    // Redirect manually
+    window.location.href = oauthUrl;
     
   } catch (error) {
     console.error('Error logging in:', error)
