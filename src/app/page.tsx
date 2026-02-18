@@ -27,15 +27,32 @@ export default function Home() {
         ? 'http://localhost:3000/auth/callback'
         : 'https://smart-bookmark-app-inky-nu.vercel.app/auth/callback';
 
-      console.log('Redirecting to:', redirectTo); // Add this for debugging
+      console.log('🔍 Environment:', process.env.NODE_ENV);
+      console.log('🔍 Redirect URL being sent:', redirectTo);
 
-      const { error } = await supabase.auth.signInWithOAuth({
+      const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: redirectTo, // This must be 'redirectTo' not 'redirectUrl'
+          redirectTo: redirectTo,
         },
       })
-      if (error) throw error
+
+      console.log('🔍 OAuth data:', data);
+      console.log('🔍 OAuth URL from data:', data?.url);
+
+      if (error) {
+        console.log('🔍 OAuth error:', error);
+        throw error;
+      }
+
+      // If data.url exists, log it
+      if (data?.url) {
+        console.log('🔍 Full OAuth URL:', data.url);
+        // Extract and log the redirect_uri parameter
+        const urlObj = new URL(data.url);
+        console.log('🔍 redirect_uri in URL:', urlObj.searchParams.get('redirect_uri'));
+      }
+
     } catch (error) {
       console.error('Error logging in:', error)
       setLoading(false)
