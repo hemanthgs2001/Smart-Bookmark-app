@@ -19,25 +19,27 @@ export default function Home() {
     checkUser()
   }, [router, supabase])
 
-  const handleGoogleLogin = async () => {
-    try {
-      setLoading(true)
-      
-      const { data, error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-          redirectTo: 'http://localhost:3000/auth/callback',
-        },
-      })
-      
-      if (error) throw error
-      
-    } catch (error) {
-      console.error('Error logging in:', error)
-      setLoading(false)
-    }
+const handleGoogleLogin = async () => {
+  try {
+    setLoading(true)
+    
+    // Get the correct redirect URL based on environment
+    const redirectUrl = process.env.NODE_ENV === 'development' 
+      ? 'http://localhost:3000/auth/callback'
+      : 'https://smart-bookmark-app-inky-nu.vercel.app/auth/callback';
+    
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: redirectUrl,
+      },
+    })
+    if (error) throw error
+  } catch (error) {
+    console.error('Error logging in:', error)
+    setLoading(false)
   }
-
+}
   return (
     <main className="flex min-h-screen flex-col items-center justify-center p-24">
       <div className="z-10 max-w-5xl w-full items-center justify-center font-mono text-sm flex flex-col">
