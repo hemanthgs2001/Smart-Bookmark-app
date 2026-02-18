@@ -73,15 +73,24 @@ const handleGoogleLogin = async () => {
     
     console.log('🔍 Full OAuth URL:', oauthUrl);
     
-    // Redirect manually
-    window.location.href = oauthUrl;
+    // Log the encoded redirect_to parameter separately
+    const encodedRedirect = encodeURIComponent(redirectTo);
+    console.log('🔍 Encoded redirect_to:', encodedRedirect);
+    
+    // Also log what we're about to redirect to
+    console.log('🔍 Final redirect URL:', oauthUrl);
+    
+    // Open in new window to see the exact URL (optional)
+    window.open(oauthUrl, '_blank');
+    
+    // Or redirect manually
+    // window.location.href = oauthUrl;
     
   } catch (error) {
     console.error('Error logging in:', error)
     setLoading(false)
   }
 }
-
 
 
 
