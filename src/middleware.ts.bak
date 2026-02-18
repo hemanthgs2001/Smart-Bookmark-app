@@ -1,0 +1,42 @@
+import { createClient } from '@/lib/supabase/middleware'
+import { NextResponse, type NextRequest } from 'next/server'
+
+export async function middleware(request: NextRequest) {
+  try {
+    const { supabase, response } = createClient(request)
+
+    // Refresh session if expired
+    const { data: { session } } = await supabase.auth.getSession()
+
+    // Auth condition checking
+    const isAuthPage = request.nextUrl.pathname.startsWith('/auth')
+    const isApiAuthRoute = request.nextUrl.pathname.startsWith('/auth/callback')
+    const isHomePage = request.nextUrl.pathname === '/'
+    const isTestPage = request.nextUrl.pathname === '/test'
+
+    // If accessing protected route without session, redirect to home
+    if (!session && !isAuthPage && !isApiAuthRoute && !isHomePage && !isTestPage) {
+      const redirectUrl = new URL('/', request.url)
+      return NextResponse.redirect(redirectUrl)
+    }
+
+    // If has session and accessing home page, redirect to bookmarks
+    if (session && isHomePage) {
+      const redirectUrl = new URL('/bookmarks', request.url)
+      return NextResponse.redirect(redirectUrl)
+    }
+
+    return response
+  } catch (e) {
+    // If there's an error, allow the request to continue
+    return NextResponse.next({
+      request: {
+        headers: request.headers,
+      },
+    })
+  }
+}
+
+export const config = {
+  matcher: ['/((?!_next/static|_next/image|favicon.ico).*)'],
+}
