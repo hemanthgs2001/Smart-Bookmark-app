@@ -56,30 +56,17 @@ export default function Home() {
 
 
 const handleGoogleLogin = async () => {
-  try {
-    setLoading(true)
-    
-    // Use environment variable instead of hardcoding
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    console.log('🔍 Supabase URL from env:', supabaseUrl);
-    
-    // Hardcode the EXACT redirect URL
-    const redirectTo = 'https://smart-bookmark-app-inky-nu.vercel.app/auth/callback';
-    console.log('🔍 Redirect to:', redirectTo);
-    
-    // Construct the OAuth URL manually
-    const oauthUrl = `${supabaseUrl}/auth/v1/authorize?provider=google&redirect_to=${encodeURIComponent(redirectTo)}`;
-    
-    console.log('🔍 Full OAuth URL:', oauthUrl);
-    
-    // Redirect manually
-    window.location.href = oauthUrl;
-    
-  } catch (error) {
-    console.error('Error logging in:', error)
-    setLoading(false)
+  const { error } = await supabase.auth.signInWithOAuth({
+    provider: "google",
+    options: {
+      redirectTo: "https://smart-bookmark-app-inky-nu.vercel.app/auth/callback",
+    },
+  });
+
+  if (error) {
+    console.error("Google login error:", error.message);
   }
-}
+};
 
 
 
