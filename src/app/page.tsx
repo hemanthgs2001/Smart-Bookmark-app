@@ -18,46 +18,30 @@ export default function Home() {
     }
     checkUser()
   }, [router, supabase])
-  const handleGoogleLogin = async () => {
-    try {
-      setLoading(true)
-
-      // Get the correct redirect URL based on environment
-      const redirectTo = process.env.NODE_ENV === 'development'
-        ? 'http://localhost:3000/auth/callback'
-        : 'https://smart-bookmark-app-inky-nu.vercel.app/auth/callback';
-
-      console.log('🔍 Environment:', process.env.NODE_ENV);
-      console.log('🔍 Redirect URL being sent:', redirectTo);
-
-      const { data, error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-          redirectTo: redirectTo,
-        },
-      })
-
-      console.log('🔍 OAuth data:', data);
-      console.log('🔍 OAuth URL from data:', data?.url);
-
-      if (error) {
-        console.log('🔍 OAuth error:', error);
-        throw error;
-      }
-
-      // If data.url exists, log it
-      if (data?.url) {
-        console.log('🔍 Full OAuth URL:', data.url);
-        // Extract and log the redirect_uri parameter
-        const urlObj = new URL(data.url);
-        console.log('🔍 redirect_uri in URL:', urlObj.searchParams.get('redirect_uri'));
-      }
-
-    } catch (error) {
-      console.error('Error logging in:', error)
-      setLoading(false)
-    }
+const handleGoogleLogin = async () => {
+  try {
+    setLoading(true)
+    
+    // Hardcode the EXACT redirect URL for production
+    const redirectTo = 'https://smart-bookmark-app-inky-nu.vercel.app/auth/callback';
+    
+    console.log('🔍 Using redirect URL:', redirectTo);
+    
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: redirectTo,
+      },
+    })
+    
+    console.log('🔍 OAuth response:', data);
+    
+    if (error) throw error
+  } catch (error) {
+    console.error('Error logging in:', error)
+    setLoading(false)
   }
+}
   return (
     <main className="flex min-h-screen flex-col items-center justify-center p-24">
       <div className="z-10 max-w-5xl w-full items-center justify-center font-mono text-sm flex flex-col">
